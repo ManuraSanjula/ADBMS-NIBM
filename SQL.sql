@@ -260,6 +260,97 @@ END;
 
 --- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+CREATE SEQUENCE Users_seq
+START WITH 1 -- Starting number for the sequence
+INCREMENT BY 1; -- Increment value for each new entry
+
+
+CREATE OR REPLACE PROCEDURE add_admin(
+    p_first_name IN VARCHAR2,
+    p_last_name IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_nic IN VARCHAR2
+) AS
+    v_user_id NUMBER;
+BEGIN
+    -- Insert into Users table
+    INSERT INTO Users (UserID, FirstName, LastName, Email, Password, NIC, Type)
+    VALUES (Users_seq.NEXTVAL, p_first_name, p_last_name, p_email, p_password, p_nic, 'Admin')
+    RETURNING UserID INTO v_user_id;
+
+    -- Insert into Admin table
+    INSERT INTO Admin (UserID) VALUES (v_user_id);
+
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE add_driver(
+    p_first_name IN VARCHAR2,
+    p_last_name IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_nic IN VARCHAR2,
+    p_license_number IN VARCHAR2
+) AS
+    v_user_id NUMBER;
+BEGIN
+    -- Insert into Users table
+    INSERT INTO Users (UserID, FirstName, LastName, Email, Password, NIC, Type)
+    VALUES (Users_seq.NEXTVAL, p_first_name, p_last_name, p_email, p_password, p_nic, 'Driver')
+    RETURNING UserID INTO v_user_id;
+
+    -- Insert into Driver table
+    INSERT INTO Driver (UserID, LicenseNumber) VALUES (v_user_id, p_license_number);
+
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE add_manager(
+    p_first_name IN VARCHAR2,
+    p_last_name IN VARCHAR2,
+    p_email IN VARCHAR2,
+    p_password IN VARCHAR2,
+    p_nic IN VARCHAR2
+) AS
+    v_user_id NUMBER;
+BEGIN
+    -- Insert into Users table
+    INSERT INTO Users (UserID, FirstName, LastName, Email, Password, NIC, Type)
+    VALUES (Users_seq.NEXTVAL, p_first_name, p_last_name, p_email, p_password, p_nic, 'Manager')
+    RETURNING UserID INTO v_user_id;
+
+    -- Insert into Manager table
+    INSERT INTO Manager (UserID) VALUES (v_user_id);
+
+    COMMIT;
+END;
+/
+
+
+-- 0000000000000000000000
+
+BEGIN
+    add_admin('Hansana', 'Adhikari', 'hansana@gmail.com', 'password123', '123456789V');
+END;
+/
+
+
+BEGIN
+    add_driver('raaid', 'Mohomad', 'raaid', 'password123', '087624321V', 'DR12345');
+END;
+/
+
+BEGIN
+    add_manager('mathesha', 'Silva', 'matheesha@gmial.com', 'password123', '456789123V');
+END;
+/
+
+
+--- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 CREATE OR REPLACE PROCEDURE Insert_Category (
     p_CategoryName IN VARCHAR2,
     p_Description  IN VARCHAR2
