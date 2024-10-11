@@ -531,6 +531,8 @@ BEGIN
     SET CategoryName = p_CategoryName,
         Description  = p_Description
     WHERE CategoryID = p_CategoryID;
+
+    
 END Update_Category;
 /
 
@@ -2294,6 +2296,220 @@ EXCEPTION
 END;
 /
 
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+DECLARE
+    v_CartItemID CartItem.CartItemID%TYPE;
+BEGIN
+    -- Retrieve the CartItemID based on the provided conditions
+    SELECT CartItemID 
+    INTO v_CartItemID
+    FROM CartItem 
+    WHERE CartID = (SELECT CartID FROM Cart WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = 'hi'))
+      AND ProductID = (SELECT ProductID FROM Product WHERE ProductName = 'hi');
+
+    -- Call the procedure with the retrieved CartItemID
+    Delete_CartItem(p_CartItemID => v_CartItemID);
+
+    -- Output message
+    DBMS_OUTPUT.PUT_LINE('Deleted CartItem for Smartphone');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching CartItem found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+DECLARE
+    v_CartID Cart.CartID%TYPE;
+BEGIN
+    SELECT CartID INTO v_CartID
+    FROM Cart
+    WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '');
+
+    Delete_Cart(p_CartID => v_CartID);
+
+    DBMS_OUTPUT.PUT_LINE('Done');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Cart found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+DECLARE
+    v_ShippingID Shipping.ShippingID%TYPE;
+BEGIN
+    SELECT ShippingID INTO v_ShippingID
+    FROM Shipping
+    WHERE OrderID = (SELECT OrderID FROM Orders WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '') AND Status = '');
+
+    Delete_Shipping(p_ShippingID => v_ShippingID);
+
+    DBMS_OUTPUT.PUT_LINE('Deleted Shipping Details for Order');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Shipping details found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+DECLARE
+    v_PaymentID Payment.PaymentID%TYPE;
+BEGIN
+    SELECT PaymentID INTO v_PaymentID
+    FROM Payment
+    WHERE OrderID = (SELECT OrderID FROM Orders WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '') AND Status = '');
+
+    Delete_Payment(p_PaymentID => v_PaymentID);
+
+    DBMS_OUTPUT.PUT_LINE('Deleted Payment for Order');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Payment found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+DECLARE
+    v_OrderItemID OrderItem.OrderItemID%TYPE;
+BEGIN
+    SELECT OrderItemID INTO v_OrderItemID
+    FROM OrderItem
+    WHERE OrderID = (SELECT OrderID FROM Orders WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '') AND Status = '')
+      AND ProductID = (SELECT ProductID FROM Product WHERE ProductName = 'Smartphone');
+
+    Delete_OrderItem(p_OrderItemID => v_OrderItemID);
+
+    DBMS_OUTPUT.PUT_LINE('Deleted OrderItem for Smartphone');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching OrderItem found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+DECLARE
+    v_ProductID Product.ProductID%TYPE;
+BEGIN
+    SELECT ProductID INTO v_ProductID
+    FROM Product
+    WHERE ProductName = '';
+
+    Delete_Product(p_ProductID => v_ProductID);
+
+    DBMS_OUTPUT.PUT_LINE('Deleted Product: Smartphone');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Product found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+DECLARE
+    v_AddressID Address.AddressID%TYPE;
+BEGIN
+    -- Delete Shipping Address
+    SELECT AddressID INTO v_AddressID
+    FROM Address
+    WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '') AND AddressType = '';
+
+    Delete_Address(p_AddressID => v_AddressID);
+    DBMS_OUTPUT.PUT_LINE('Deleted Shipping Address for Jane Smith');
+
+    -- Delete Billing Address
+    SELECT AddressID INTO v_AddressID
+    FROM Address
+    WHERE CustomerID = (SELECT CustomerID FROM Customer WHERE Email = '') AND AddressType = '';
+
+    Delete_Address(p_AddressID => v_AddressID);
+    DBMS_OUTPUT.PUT_LINE('Deleted Billing Address for Jane Smith');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Address found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+DECLARE
+    v_CustomerID Customer.CustomerID%TYPE;
+BEGIN
+    SELECT CustomerID INTO v_CustomerID
+    FROM Customer
+    WHERE Email = '';
+
+    Delete_Customer(p_CustomerID => v_CustomerID);
+
+    DBMS_OUTPUT.PUT_LINE('Done');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Customer found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+DECLARE
+    v_SupplierID Supplier.SupplierID%TYPE;
+BEGIN
+    SELECT SupplierID INTO v_SupplierID
+    FROM Supplier
+    WHERE SupplierName = '';
+
+    Delete_Supplier(p_SupplierID => v_SupplierID);
+
+    DBMS_OUTPUT.PUT_LINE('Done');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Supplier found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+DECLARE
+    v_CategoryID Category.CategoryID%TYPE;
+BEGIN
+    SELECT CategoryID INTO v_CategoryID
+    FROM Category
+    WHERE CategoryName = '';
+
+    Delete_Category(p_CategoryID => v_CategoryID);
+
+    DBMS_OUTPUT.PUT_LINE('Done');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No matching Category found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+
+
+-- @!###!%!%!^^!^^^^^^^^^^^^^^^^^^^^!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
 
 --REPORTS ==============================================================
